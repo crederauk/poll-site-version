@@ -1,0 +1,10 @@
+# yarn
+node_modules/
+yarn-error.log
+
+# macOS cruft
+.DS_Store
+
+# IntelliJ
+.idea/
+

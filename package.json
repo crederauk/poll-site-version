@@ -1,0 +1,25 @@
+{
+  "name": "poll-site-version",
+  "version": "0.0.1",
+  "description": "Github Action to poll site and parse version meta tag",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "package": "ncc build index.js -o dist --minify --source-map",
+    "package-and-stage": "yarn package && git add dist/",
+    "test": "jest"
+  },
+  "pre-commit": [
+    "package-and-stage"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.6.0",
+    "axios": "^0.22.0",
+    "node-html-parser": "^4.1.5"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.31.1",
+    "jest": "^27.2.4",
+    "pre-commit": "^1.2.2"
+  }
+}
