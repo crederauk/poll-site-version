@@ -53,4 +53,13 @@ describe('pollForVersion', () => {
         expect(wasSuccessful).toBe(false);
         expect(axios.get).toHaveBeenCalledTimes(TIMEOUT / POLL_INTERVAL);
     });
+
+    it('returns false if site returns a 5xx error code', async () => {
+        setTimeout.mockImplementation((callback, timeout) => callback());
+        axios.get.mockReturnValue(Promise.reject({ response: { status: 503 } }));
+
+        const wasSuccessful = await pollForVersion(SITE_URL, DESIRED_VERSION, POLL_INTERVAL, TIMEOUT);
+
+        expect(wasSuccessful).toBe(false);
+    });
 });
