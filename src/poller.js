@@ -11,6 +11,7 @@ const pollForVersion = async (siteUrl, desiredVersion, pollInterval, timeout) =>
             actualVersion = await fetchAndParseVersion(siteUrl);
         } catch (error) {
             if (responseWas5xx(error)) {
+                core.info(`${formatTime(new Date())} - Received response code ${error.response.status}`);
                 return false;
             }
         }
