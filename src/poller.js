@@ -7,7 +7,16 @@ const pollForVersion = async (siteUrl, desiredVersion, pollInterval, timeout) =>
     let timeElapsed = 0;
 
     while (timeElapsed < timeout) {
-        actualVersion = await fetchAndParseVersion(siteUrl);
+        try {
+            actualVersion = await fetchAndParseVersion(siteUrl);
+        } catch (error) {
+            if (responseWas5xx(error)) {
+                core.info(`${formatTime(new Date())} - Received response code ${error.response.status}`);
+                return false;
+            }
+            throw error;
+        }
+
         core.info(`${formatTime(new Date())} - Version is ${actualVersion}`);
 
         if (actualVersion === desiredVersion) {
@@ -24,6 +33,14 @@ const pollForVersion = async (siteUrl, desiredVersion, pollInterval, timeout) =>
 const fetchAndParseVersion = async (siteUrl) => {
     const response = (await axios.get(siteUrl)).data;
     return parseMeta(response, 'version');
+};
+
+const responseWas5xx = (error) => {
+    if (!error.response) {
+        return false;
+    }
+    const { status } = error.response;
+    return (status > 500) && (status < 600);
 };
 
 const formatTime = (datetime) => {
