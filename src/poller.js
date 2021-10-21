@@ -13,6 +13,8 @@ const pollForVersion = async (siteUrl, desiredVersion, pollInterval, timeout) =>
             if (responseWas5xx(error)) {
                 core.info(`${formatTime(new Date())} - Received response code ${error.response.status}`);
                 return false;
+            } else {
+                throw error;
             }
         }
 
@@ -39,7 +41,7 @@ const responseWas5xx = (error) => {
         return false;
     }
     const { status } = error.response;
-    return (status >= 500) && (status < 600);
+    return (status > 500) && (status < 600);
 };
 
 const formatTime = (datetime) => {
