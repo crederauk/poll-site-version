@@ -1,5 +1,9 @@
-name: "Pull request checks"
-on: pull_request
+name: "Test and check dist"
+on:
+  pull_request:
+  push:
+    branches:
+      - main
 jobs:
   build_cache:
     name: "Build cache"
