@@ -64,13 +64,16 @@ describe('pollForVersion', () => {
             .toBe(notFoundResponse)
     });
 
-    it('returns false if site returns a 5xx status code (not including 500)', async () => {
+    it('keeps polling if site returns a 5xx status code (not including 500)', async () => {
         setTimeout.mockImplementation((callback, timeout) => callback());
-        axios.get.mockReturnValue(Promise.reject({ response: { status: 503 } }));
+        axios.get
+            .mockReturnValueOnce(Promise.reject({ response: { status: 503 } }))
+            .mockReturnValueOnce(Promise.resolve(Promise.resolve({ data: SITE_DATA })));
+        parseMeta.mockReturnValueOnce(DESIRED_VERSION);
 
         const wasSuccessful = await pollForVersion(SITE_URL, DESIRED_VERSION, POLL_INTERVAL, TIMEOUT);
 
-        expect(wasSuccessful).toBe(false);
+        expect(wasSuccessful).toBe(true);
     });
 
     it('throws an error if site returns a 500 status code', async () => {
